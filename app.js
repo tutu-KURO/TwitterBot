@@ -51,19 +51,19 @@ function getUser() {
 }
 
 
-function isCheckedTweet(homeTimeLineTweet) {
-  // ボット自身のツイートは無視する。
-  if (homeTimeLineTweet.user.screen_name === '22_kuro_bot') {
-    return true;
-  }
-  for (let checkedTweet of checkedTweets) {
-    // 同内容を連続投稿をするアカウントがあるため、一度でも返信した内容は返信しない仕様にしています。
-    if (checkedTweet.id_str === homeTimeLineTweet.id_str || checkedTweet.text === homeTimeLineTweet.text) {
-      return true;
-    }
-  }
-  return false;
-}
+// function isCheckedTweet(homeTimeLineTweet) {
+//   // ボット自身のツイートは無視する。
+//   if (homeTimeLineTweet.user.screen_name === '22_kuro_bot') {
+//     return true;
+//   }
+//   for (let checkedTweet of checkedTweets) {
+//     // 同内容を連続投稿をするアカウントがあるため、一度でも返信した内容は返信しない仕様にしています。
+//     if (checkedTweet.id_str === homeTimeLineTweet.id_str || checkedTweet.text === homeTimeLineTweet.text) {
+//       return true;
+//     }
+//   }
+//   return false;
+// }
 
 
 
