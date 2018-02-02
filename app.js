@@ -108,9 +108,6 @@ function sendReply() {
 }
 
 
-
-
-
 //変更予定
 // const cronJob = new cron({
 //   cronTime: '00 0-59/1 * * * *', // 1分ごとに実行
@@ -121,10 +118,7 @@ function sendReply() {
 // });
 
 
-
-
 //関数に入れて使うこと！
-
 // client.post('direct_messages/new', {
 //   user_id: 'ユーザーID',
 //   text: 'Hello Direct Message!'
