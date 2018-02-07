@@ -2,6 +2,7 @@
 'use strict';
 const Twitter = require('twitter');
 const cron = require('cron').CronJob;
+const puppeteer = require("puppeteer");
 
 let checkedTweets = [];
 let newTweets = [];
@@ -16,11 +17,13 @@ const client = new Twitter({
 
 console.log("ok")
 
+
 let promise = new Promise((resolve, reject) => {
   return getUser();
 }).then(() => {
   sendReply();
 })
+
 
 function getUser() {
   client.get("friends/ids", {
@@ -71,14 +74,14 @@ function sendReply() {
         status: tweetMessage,
         in_reply_to_status_id: tweet.id_str
       })
-      .then((tweet) => {
-        // console.log(tweet);
-        return;
-      })
-      .catch((error) => {
-        console.log(error)
-        throw error;
-      });
+        .then((tweet) => {
+          // console.log(tweet);
+          return;
+        })
+        .catch((error) => {
+          console.log(error)
+          throw error;
+        });
     });
   });
 
@@ -88,28 +91,50 @@ function sendReply() {
 
 }
 
+function weatherGet() {
+  (async () => {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto("https://weather.yahoo.co.jp/weather/jp/11/4310/11107.html");
+
+    const clip = await page.evaluate(() => {
+      const element = document.querySelector("#yjw_pinpoint_today");
+      const { x, y, width, height } = element.getBoundingClientRect();
+      return { x, y, width, height };
+    });
+
+    let imageData = await page.screenshot({ clip, type: "jpeg", quality: 100 });
+    await browser.close();
+    console.log(imageData);
+
+    client.post('media/upload', {media: imageData}, function(error, media, response) {
+      if (!error) {
+        console.log(media);
+        let status = {
+          status: '@22_kuroro yahoo天気予報から\nhttps://weather.yahoo.co.jp/weather/jp/11/4310/11107.html?rd=1',
+          media_ids: media.media_id_string 
+        }
+        client.post('statuses/update', status, function(error, tweet, response) {
+          if (!error) {
+            console.log(tweet);
+          }
+        });
+      }
+    });
+  })();
+}
 
 //変更予定
-// const cronJob = new cron({
-//   cronTime: '00 0-59/1 * * * *', // 1分ごとに実行
-//   start: true, // newした後即時実行するかどうか
-//   onTick: function () {
-//     getUser();
-//   }
-// });
+const cronJob = new cron({
+  cronTime: '30 6 * * *', // 1分ごとに実行
+  start: true, // newした後即時実行するかどうか
+  onTick: function () {
+    weatherGet();
+  }
+});
 
 
-//関数に入れて使うこと！
-// client.post('direct_messages/new', {
-//   user_id: 'ユーザーID',
-//   text: 'Hello Direct Message!'
-// })
-// .then((response) => {
-//   console.log(response);
-// })
-// .catch((error) => {
-//   console.log(error);
-// });
+
 
 
 // function isCheckedTweet(homeTimeLineTweet) {
