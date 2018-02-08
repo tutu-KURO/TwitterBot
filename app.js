@@ -126,7 +126,8 @@ function weatherGet() {
 
 //変更予定
 const cronJob = new cron({
-  cronTime: '30 6 * * *', // 1分ごとに実行
+  cronTime: "30 16 * * *",
+//  cronTime: '30 6 * * *', // 1分ごとに実行
   start: true, // newした後即時実行するかどうか
   onTick: function () {
     weatherGet();
